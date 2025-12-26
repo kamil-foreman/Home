@@ -59,12 +59,14 @@
             /* Mint Green Accent */
             --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+            --nav-height: 70px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent; /* Remove blue highlight on touch */
         }
 
         html {
@@ -123,17 +125,17 @@
             width: 100%;
             background-color: rgba(17, 17, 17, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 1000;
+            z-index: 1002; /* UPDATED: Higher than mobile menu */
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            height: var(--nav-height);
         }
 
         .nav-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 70px;
+            height: 100%;
         }
-
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
@@ -141,6 +143,7 @@
             letter-spacing: 1px;
             display: flex;
             align-items: center;
+            z-index: 1002; /* Above mobile menu */
         }
 
         .logo img {
@@ -148,6 +151,7 @@
             height: 32px;
         }
 
+        /* Desktop Nav Links */
         .nav-links {
             display: flex;
             gap: 30px;
@@ -157,11 +161,173 @@
             font-size: 0.9rem;
             color: var(--text-main);
             font-weight: 500;
+            position: relative;
         }
 
         .nav-links a:hover {
             color: var(--accent);
         }
+        
+        /* Underline animation for desktop */
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* --- HAMBURGER MENU (Hidden on Desktop) --- */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            z-index: 2001; /* UPDATED: Super high to ensure clickability */
+            width: 50px; /* UPDATED: Larger hit area */
+            height: 50px; /* UPDATED: Larger hit area */
+            position: relative;
+            background: transparent;
+            border: none;
+            padding: 10px; /* UPDATED: Padding for easier tapping */
+            margin-right: -10px; /* Compensate for padding */
+            outline: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 30px; /* Fixed width for the lines */
+            height: 2px;
+            background-color: var(--accent);
+            position: absolute;
+            left: 10px; /* Center inside the 50px button */
+            transition: all 0.3s ease-in-out;
+            border-radius: 2px;
+        }
+
+        .hamburger span:nth-child(1) { top: 13px; }
+        .hamburger span:nth-child(2) { top: 24px; }
+        .hamburger span:nth-child(3) { top: 35px; }
+
+        /* Hamburger Active State (X shape) */
+        /* Turning RED to indicate "Close/Terminate" */
+        .hamburger.active span {
+            background-color: #ff5f57; 
+        }
+
+        .hamburger.active span:nth-child(1) {
+            top: 24px;
+            transform: rotate(45deg);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            top: 24px;
+            transform: rotate(-45deg);
+        }
+
+        /* --- MOBILE MENU OVERLAY --- */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%; 
+            height: 100vh;
+            background-color: rgba(17, 17, 17, 0.98);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            z-index: 1000; /* UPDATED: Below the nav/button */
+            transform: translateX(100%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            padding-top: var(--nav-height); 
+        }
+
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent);
+            position: absolute;
+            transition: all 0.3s ease-in-out;
+            border-radius: 2px;
+        }
+
+        .hamburger span:nth-child(1) { top: 0; }
+        .hamburger span:nth-child(2) { top: 11px; }
+        .hamburger span:nth-child(3) { top: 22px; }
+
+        /* Hamburger Active State (X shape) */
+        .hamburger.active span:nth-child(1) {
+            top: 11px;
+            transform: rotate(45deg);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            top: 11px;
+            transform: rotate(-45deg);
+        }
+
+        /* --- MOBILE MENU OVERLAY --- */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%; /* Full width for modern look */
+            height: 100vh;
+            background-color: rgba(17, 17, 17, 0.98);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center;
+            z-index: 1001; /* UPDATED: Lower than nav so button stays visible */
+            transform: translateX(100%); /* Start hidden off-screen */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            padding-top: var(--nav-height); /* UPDATED: Prevent links from hiding behind nav */
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .mobile-menu a {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin: 20px 0;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent);
+        }
+
+        /* Animation for menu items appearing */
+        .mobile-menu.open a {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .mobile-menu.open a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu.open a:nth-child(2) { transition-delay: 0.2s; }
+        .mobile-menu.open a:nth-child(3) { transition-delay: 0.3s; }
+        .mobile-menu.open a:nth-child(4) { transition-delay: 0.4s; }
+
 
         /* --- HERO SECTION --- */
         #home {
@@ -219,8 +385,8 @@
         }
 
         .social-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border: 1px solid var(--accent);
             border-radius: 50%;
             display: flex;
@@ -229,11 +395,13 @@
             color: var(--accent);
             font-size: 1.2rem;
             background: rgba(17, 17, 17, 0.8);
+            transition: all 0.3s ease;
         }
 
         .social-icon:hover {
             background-color: rgba(100, 255, 218, 0.1);
-            transform: translateY(-3px);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.1);
         }
 
         /* --- HEADINGS --- */
@@ -257,7 +425,8 @@
         /* --- CARDS --- */
         .grid-3 {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            /* Optimized for mobile: uses minmax(280px) to prevent overflow on small phones */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 25px;
         }
 
@@ -268,6 +437,7 @@
             transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 2;
+            height: 100%; /* Ensures cards in same row are same height */
         }
 
         .card:hover {
@@ -290,6 +460,7 @@
             color: var(--text-secondary);
             font-size: 0.95rem;
             margin-bottom: 20px;
+            line-height: 1.7;
         }
 
         .tech-stack {
@@ -308,6 +479,10 @@
             padding-left: 30px;
             padding-bottom: 40px;
             position: relative;
+        }
+        
+        .history-item:last-child {
+            border-left: 2px solid transparent; /* Hide line for last item */
         }
 
         .history-item::before {
@@ -330,9 +505,10 @@
         .history-meta {
             font-family: monospace;
             color: var(--accent);
-            font-size: 1.1rem;
+            font-size: 0.9rem; /* Adjusted for mobile readability */
             margin-bottom: 15px;
             display: block;
+            line-height: 1.4;
         }
 
         .history-desc {
@@ -346,41 +522,66 @@
             overflow: hidden;
             transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.02);
+            height: 100%;
         }
 
         .project-content {
             padding: 25px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .project-title {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             color: var(--text-main);
             margin-bottom: 10px;
             display: block;
-            font-weight: 700;
+            font-weight: 500;
             text-align: center;
+            line-height: 1.6;
         }
 
         .project-card:hover .project-title {
             color: var(--accent);
         }
 
-        .project-desc {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 20px;
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
         }
 
-        .project-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            font-family: monospace;
-            font-size: 0.8rem;
+        /* --- CONTACT & FOOTER --- */
+        .contact-details {
+            margin-top: 20px;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .contact-details div {
+            margin-bottom: 15px;
+        }
+
+        .contact-details i {
             color: var(--accent);
+            margin-right: 10px;
+        }
+        
+        .cta-button {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-weight: 500;
+            background: transparent;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background: rgba(100, 255, 218, 0.1);
         }
 
-        /* --- FOOTER --- */
         footer {
             text-align: center;
             padding: 30px 0;
@@ -391,47 +592,64 @@
             z-index: 2;
         }
 
-        /* Contact Details Styling */
-        .contact-details {
-            margin-top: 20px;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-
-        .contact-details div {
-            margin-bottom: 10px;
-        }
-
-        .contact-details i {
-            color: var(--accent);
-            margin-right: 10px;
-        }
-
-        /* --- MOBILE --- */
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 768px) {
+            /* Navbar Logic */
+            .nav-links {
+                display: none; /* Hide desktop links */
+            }
+
+            .hamburger {
+                display: block; /* Show hamburger */
+            }
+
+            /* Layout Adjustments */
+            .section {
+                padding: 60px 0; /* Reduced padding for mobile */
+            }
+
             .hero-content h1 {
                 font-size: 2.5rem;
             }
 
             .hero-content h2 {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+            }
+            
+            .hero-content p {
+                font-size: 0.95rem;
+                padding: 0 10px;
+            }
+
+            .section-title {
                 font-size: 1.5rem;
+                margin-bottom: 30px;
             }
 
             .section-title::after {
-                width: 100px;
-            }
-
-            .nav-links {
-                display: none;
+                width: 100%; /* Line takes up remaining space */
+                max-width: 150px;
             }
 
             #floating-obj {
                 font-size: 8rem;
+                opacity: 0.03; /* Less distraction on mobile */
             }
 
             .profile-container {
-                width: 150px;
-                height: 150px;
+                width: 140px;
+                height: 140px;
+                margin-bottom: 20px;
+            }
+            
+            /* History & Card adjustments */
+            .history-item {
+                padding-left: 20px;
+            }
+            
+            .card, .project-card {
+                padding: 25px 20px;
             }
         }
     </style>
@@ -444,15 +662,34 @@
         <i class="fas fa-tools" style="transform: rotate(-15deg);"></i>
     </div>
 
+    <!-- Mobile Menu Overlay (Removed inline onclicks for cleaner JS) -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#about" class="mobile-link">Expertise</a>
+        <a href="#history" class="mobile-link">Experience</a>
+        <a href="#projects" class="mobile-link">Skills</a>
+        <a href="#contact" class="mobile-link">Contact</a>
+    </div>
+
     <nav>
         <div class="container nav-content">
-            <div class="logo"><img src="assets/favicon-32x32.png" alt="logo"></div>
+            <div class="logo">
+                <a href="#"><img src="assets/favicon-32x32.png" alt="logo" onerror="this.src='https://placehold.co/32x32/111/64ffda?text=K'"></a>
+            </div>
+            <div class="nav-text"><p>Kamil Foreman</p></div>
+            <!-- Desktop Links -->
             <div class="nav-links">
                 <a href="#about">Expertise</a>
                 <a href="#history">Experience</a>
                 <a href="#projects">Skills</a>
                 <a href="#contact">Contact</a>
             </div>
+
+            <!-- Hamburger Button -->
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </nav>
 
@@ -460,7 +697,8 @@
         <div class="container hero-content">
 
             <div class="profile-container">
-                <img src="assets/profile1.jpg" alt="Kamil Profile Photo">
+                <!-- Added fallback for profile image -->
+                <img src="assets/profile1.jpg" alt="Kamil Profile Photo" onerror="this.src='https://placehold.co/200x200/1a1a1a/64ffda?text=Kamil'">
             </div>
 
             <h1>Kamil</h1>
@@ -469,9 +707,10 @@
                 Based in Bihar, India. I specialize in supervising installations, troubleshooting complex mechanical
                 issues, and managing site operations for maximum efficiency and safety.
             </p>
-            <!-- linkdin prfile make and upddte the link -->
+            
             <div class="social-links">
-                <a href="www.linkedin.com/in/kamil-foreman" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <!-- Fixed href link format (added https://) -->
+                <a href="https://www.linkedin.com/in/kamil-foreman/" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
 
                 <a href="https://wa.me/917091870701" target="_blank" class="social-icon" title="Chat on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
@@ -521,65 +760,64 @@
             <div style="max-width: 800px;">
                 <div class="history-item">
                     <h3 class="history-title">HVAC Supervisor</h3>
-                    <span class="history-meta">Yusra Mall, nawada, Bihar, India<br>
+                    <span class="history-meta">Yusra Mall, Nawada, Bihar, India<br>
                         Jan 2025 - Present
                     </span>
                     <p class="history-desc">
-                        $ Installed split, ducted, and VRF systems in commercial Building .<br>
+                        $ Installed split, ducted, and VRF systems in commercial Building.<br>
                         $ Diagnosed faults and implemented repairs with minimal disruption.
                     </p>
                 </div>
                 <div class="history-item">
                     <h3 class="history-title">HVAC Foreman</h3>
-                    <span class="history-meta">Al-Meer Company Ltd Khobar Saudi Arabia (For the Aramco Project Dhahran)
-                        <br> July 2022-December 2024</span>
+                    <span class="history-meta">Al-Meer Company Ltd, Khobar, Saudi Arabia (Aramco Project)<br> 
+                        July 2022 - December 2024</span>
                     <p class="history-desc">
                         $ Installed split, water chiller, ducted, and VRF systems in commercial and residential
-                        buildings <br>
-                        $ Diagnosed faults and implemented repairs with minimal disruption <br>
-                        $ Trained junior staff in safety protocols and system diagnostics <br>
-                        $ Collaborated with architects and designers to align HVAC with aesthetic goals</p>
+                        buildings.<br>
+                        $ Diagnosed faults and implemented repairs with minimal disruption.<br>
+                        $ Trained junior staff in safety protocols and system diagnostics.<br>
+                        $ Collaborated with architects and designers to align HVAC with aesthetic goals.</p>
                 </div>
                 <div class="history-item">
                     <h3 class="history-title">HVAC Technician</h3>
-                    <span class="history-meta">National Contraction Co. Pvt Ltd
-                        Baroda, Gujarat India <br>
-                        Jan 2017–June 2019
+                    <span class="history-meta">National Contraction Co. Pvt Ltd, Baroda, Gujarat<br>
+                        Jan 2017 – June 2019
                     </span>
                     <p class="history-desc">
-                        $ Installed split, ducted, and VRF systems in commercial and residential buildings<br>
-                        $ Diagnosed faults and implemented repairs with minimal disruption
+                        $ Installed split, ducted, and VRF systems in commercial and residential buildings.<br>
+                        $ Diagnosed faults and implemented repairs with minimal disruption.
                     </p>
                 </div>
                 <div class="history-item">
                     <h3 class="history-title">HVAC Technician</h3>
-                    <span class="history-meta">Royal Gulf Limited. Doha, Qatar <br>
-                        May 2016-November 2016
+                    <span class="history-meta">Royal Gulf Limited, Doha, Qatar<br>
+                        May 2016 - November 2016
                     </span>
                     <p class="history-desc">
-                        $ Installed split, Water Chiller, ducted, and VRF systems in commercial and residential buildings. <br>
+                        $ Installed split, Water Chiller, ducted, and VRF systems.<br>
                         $ Diagnosed faults and implemented repairs with minimal disruption.
 
                     </p>
                 </div>
                 <div class="history-item">
                     <h3 class="history-title">HVAC Technician</h3>
-                    <span class="history-meta">Diplomat Electrical Pvt. Ltd. Mumbai, India<br>
-                        Oct 2014-Jan 2016
+                    <span class="history-meta">Diplomat Electrical Pvt. Ltd, Mumbai, India<br>
+                        Oct 2014 - Jan 2016
                     </span>
                     <p class="history-desc">
-                        $ Installed split, Water Chiller, ducted, and VRF systems in commercial and residential buildings. <br>
+                        $ Installed split, Water Chiller, ducted, and VRF systems.<br>
                         $ Diagnosed faults and implemented repairs with minimal disruption.
 
                     </p>
                 </div>
                 <div class="history-item">
                     <h3 class="history-title">HVAC Technician</h3>
-                    <span class="history-meta">Power Tech Electricals, Mumbai, India <br>
-                        Feb 2013-Sep 2016
+                    <span class="history-meta">Power Tech Electricals, Mumbai, India<br>
+                        Feb 2013 - Sep 2016
                     </span>
                     <p class="history-desc">
-                        $ Installed split, Water Chiller, ducted, and VRF systems in commercial and residential buildings. <br>
+                        $ Installed split, Water Chiller, ducted, and VRF systems.<br>
                         $ Diagnosed faults and implemented repairs with minimal disruption.
                     </p>
                 </div>
@@ -593,27 +831,26 @@
             <div class="grid-3">
                 <div class="project-card">
                     <div class="project-content">
-                        <a href="#" class="project-title">
-                            ⚙️ HVAC System Installation & Repair <br> <br>
+                        <span class="project-title">
+                            ⚙️ HVAC System Installation & Repair <br><br>
                             ⚙️ Team Leadership & Staff Training
-                        </a>
+                        </span>
                     </div>
                 </div>
                 <div class="project-card">
                     <div class="project-content">
-                        <a href="#" class="project-title">
-                            ⭐ Preventive Maintenance Planning <br> <br>
+                        <span class="project-title">
+                            ⭐ Preventive Maintenance Planning <br><br>
                             ⭐ Vendor Coordination & Site Supervision
-
-                        </a>
+                        </span>
                     </div>
                 </div>
                 <div class="project-card">
                     <div class="project-content">
-                        <a href="#" class="project-title">
-                            💡 Safety Compliance & Technical Reporting <br> <br>
+                        <span class="project-title">
+                            💡 Safety Compliance & Technical Reporting <br><br>
                             💡 Guest-Centric Climate Solutions
-                        </a>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -632,9 +869,7 @@
                 <div><i class="fas fa-phone-alt"></i> <a href="tel:+917091870701">+91 70918 70701</a></div>
             </div>
 
-            <a href="mailto:kamil@example.com"
-                style="border: 1px solid var(--accent); color: var(--accent); padding: 15px 30px; border-radius: 5px; font-weight: 500;">Send
-                Email</a>
+            <a href="mailto:kamilbabu7070@gmail.com" class="cta-button">Send Email</a>
         </div>
     </section>
 
@@ -643,14 +878,57 @@
     </footer>
 
     <script>
+        // --- MOBILE MENU LOGIC ---
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        const body = document.body;
+
+        function toggleMenu() {
+            hamburgerBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            
+            // Prevent scrolling when menu is open
+            if (mobileMenu.classList.contains('open')) {
+                body.style.overflow = 'hidden';
+            } else {
+                body.style.overflow = 'auto';
+            }
+        }
+
+        // Toggle on button click
+        hamburgerBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent clicks from bubbling strangely
+            toggleMenu();
+        });
+
+        // Close menu when a link is clicked
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('open')) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        // Close menu if clicking outside (optional safety)
+        document.addEventListener('click', (e) => {
+            if (mobileMenu.classList.contains('open') && 
+                !mobileMenu.contains(e.target) && 
+                !hamburgerBtn.contains(e.target)) {
+                toggleMenu();
+            }
+        });
+
+        // --- FLOATING ANIMATION ---
         document.addEventListener('DOMContentLoaded', () => {
             const floater = document.getElementById('floating-obj');
 
             // Initial position and velocity
             let x = Math.random() * (window.innerWidth - 200);
             let y = Math.random() * (window.innerHeight - 200);
-            let dx = 1.0;
-            let dy = 1.0;
+            let dx = 0.5; // Slowed down slightly for smoother feel
+            let dy = 0.5;
 
             function animate() {
                 // Get current window dimensions
@@ -682,6 +960,5 @@
     </script>
 
 </body>
-
 
 </html>
